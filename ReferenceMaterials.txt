@@ -1,1 +1,76 @@
-// write down, please
+Подключение к бд:
+connect Ivan/1234@//localhost/orclpdb
+connect sys/1234@//localhost/orclpdb as sysdba - нужно указать роль, когда подключение по суперпользователем
+connect Petay/petay1234@//localhost/orclpdb
+
+Настройка вывода таблиц:
+set lines 256
+set trimout on
+set tab off
+set pagesize 100
+set colsep " | "
+
+Просмотр ТП:
+select TABLESPACE_NAME from dba_tablespaces; //Те которые доступны
+select TABLESPACE_NAME from user_tablespaces; //Данные которые пренадлежат именно текущему пользователю
+select TABLESPACE_NAME from all_tablespaces; //Все существующие табличные пространства
+
+Нужно сделать:
+1. Создать табличное пространство
+2. Создать пользователя с заданным табличным пространством
+3. Создать несколько ролей
+4. Выдать привелегии роли
+5. Унаследовать одну роль от другой
+6. Выдать привелегии родительской роли и младшей роли
+7. Посмотреть какие существуют привелегии
+8. Посмотреть какие существуют роли
+6. Назначить роль пользователю
+7. Посмотреть пользователей
+8. Посмотреть какие роли у пользователя
+9. Посмотреть все табличные пространства
+10. Удалить роль, убрать привелегии, удалить пользователя, удалить табличное пространство
+
+
+Создание табличного пространства:
+
+create tablespace ts3
+datafile 'C:\Popov\oracle\oradata\ORCL\ts3f.dbf' 
+size 100m autoextend on next 10m maxsize 200m;
+
+Удаление ТБ без удаления с диска его файлов
+DROP TABLESPACE ts2 INCLUDING CONTENTS;
+
+Удаление ТБ с удалением файлов с диска
+DROP TABLESPACE ts3 INCLUDING CONTENTS AND DATAFILES
+
+
+Просмотр всех табличных пространств:
+select TABLESPACE_NAME from dba_TABLESPACES;
+
+Просмотр все ролей:
+select role from dba_roles;
+
+Создание новой роли:
+create role testRole1 identified by pass;
+
+Выдача прав роли:
+grant connect to roletest1; права на подключение к бд
+Создание пользователя:
+create user Petay 
+identified by pass
+default tablespace mytbs;
+
+Посмотреть все роли у текущего пользователя:
+select username, granted_role from user_role_privs;
+
+Посмотреть привелегии пользователя:
+select grantee, privilege from dba_sys_privs where grantee = 'PETAY';
+
+Посмотреть все табличные пространства и их статус:
+select TABLESPACE_NAME, STATUS from dba_tablespaces;
+
+Посмторить пользователя и его дефольное табличное пространство:
+select username, default_tablespace from dba_users;
+
+Чтобы можно было добавлять данные в созданное табличное пространство, нужно установить квоту для пользователя:
+alter user petay quota 100m on mytbs;
